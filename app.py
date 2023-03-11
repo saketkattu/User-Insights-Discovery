@@ -64,7 +64,7 @@ def unified_data_model():
 
 st.title('User Insights Discovery')
 
-
+st.text("Try entering the below : Zerodha com.zerodha.kite3")
 twitter_keyword=st.text_input("twitter", key="twitter")
 reddit_keyword=st.text_input("reddit", key="reddit")
 playstore=st.text_input("App url on Google Playstore", key="playstore")
