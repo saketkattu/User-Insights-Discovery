@@ -6,6 +6,14 @@ import numpy as np
 import snscrape.modules.twitter as snstweet
 import snscrape.modules.reddit as snsred
 
+from flair.models import TextClassifier
+from flair.data import Sentence
+from segtok.segmenter import split_single
+import re
+import nltk
+from nltk.tokenize import word_tokenize
+from nltk.tag import pos_tag
+import spacy
 # ----------------------------------------------------------------------------------------------------------------------------
 #                                                  DATA EXTRACTION FUNCTIONS 
 # ----------------------------------------------------------------------------------------------------------------------------
@@ -61,6 +69,16 @@ def unified_data_model():
 # ----------------------------------------------------------------------------------------------------------------------------
 #                                                          MAIN APP CODE 
 # ----------------------------------------------------------------------------------------------------------------------------
+# PlayStore 
+
+from google_play_scraper import app
+
+result = app(
+    'com.zerodha.kite3',
+    lang='en', # defaults to 'en'
+    country='in' # defaults to 'us'
+)
+
 
 st.title('User Insights Discovery')
 
@@ -70,11 +88,37 @@ reddit_keyword=st.text_input("reddit", key="reddit")
 playstore=st.text_input("App url on Google Playstore", key="playstore")
 
 
+#if st.button('Import Data'):
+ #   st.write(get_tweets(twitter_keyword,100))
+
+
+from google_play_scraper import Sort, reviews
+
+result, continuation_token = reviews(
+    playstore,
+    lang='en', # defaults to 'en'
+    country='in', # defaults to 'us'
+    sort=Sort.NEWEST, # defaults to Sort.NEWEST
+    count=100, # defaults to 100
+
+)
+
+# If you pass `continuation_token` as an argument to the reviews function at this point,
+# it will crawl the items after 3 review items.
+
+result, _ = reviews(
+    playstore,
+    continuation_token=continuation_token # defaults to None(load from the beginning)
+)
+
+play_df = pd.DataFrame(np.array(result),columns=['review'])
+play_df = play_df.join(pd.DataFrame(play_df.pop('review').tolist()))
+play_df['source']=['playstore']*int(len(play_df))
+playstore_df=play_df[['content','source']]
+
+
 if st.button('Import Data'):
-    st.write(get_tweets(twitter_keyword,100))
-
-
-
+    st.dataframe(playstore_df)
 
 
 
