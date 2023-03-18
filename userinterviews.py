@@ -12,7 +12,7 @@ import spacy
 import streamlit as st
 
 classifier = TextClassifier.load('en-sentiment')
-textt=st.text_input(label='textt')
+textt=st.text_area(label='Enter Your User Interview',placeholder=" Enter a user interview to get started")
 
 def make_sentences(text):
     """ Break apart text into a list of sentences """
@@ -51,6 +51,18 @@ for se in sent:
         tok_list.append(se[0])
 
 if st.button("Get Insights"):
-   pass
+  st.subheader("Here's what the user likes about your app/product:")
+  for p in pos:
+     st.write(p)
    
-   
+  st.write()
+  st.subheader("Here's what the user does not like or what you can improve")
+  for n in neg: 
+     st.write(n)
+
+  st.write()
+  st.subheader("Keywords and themes you need to pay attention to")
+  for t in tok_list:
+     st.write(t)
+     st.write()
+     
